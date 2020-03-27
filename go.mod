@@ -3,11 +3,16 @@ module github.com/redhat-developer/openshift-jenkins-operator
 go 1.13
 
 require (
+	github.com/go-logr/logr v0.1.0
+	github.com/go-logr/zapr v0.1.1
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/operator-framework/operator-sdk v0.16.0
 	github.com/spf13/pflag v1.0.5
+	go.uber.org/zap v1.10.0
 	k8s.io/api v0.0.0
 	k8s.io/apimachinery v0.0.0
 	k8s.io/client-go v12.0.0+incompatible
+	k8s.io/kube-openapi v0.0.0-20190918143330-0270cf2f1c1d
 	sigs.k8s.io/controller-runtime v0.4.0
 )
 

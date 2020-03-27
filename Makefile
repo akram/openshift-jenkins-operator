@@ -3,7 +3,6 @@ SHELL:=/bin/bash
 NAMESPACE=jenkins-operator
 
 ##@ Application
-
 install: ## Install all resources (CR/CRD's, RBAC and Operator)
 	@echo ....... Creating namespace ....... 
 	- kubectl create namespace ${NAMESPACE}
@@ -32,6 +31,8 @@ uninstall: ## Uninstall all that all performed in the $ make install
 	- kubectl delete namespace ${NAMESPACE}
 
 ##@ Development
+run-local: ## Run the operator locally while connecting to a remote k8s cluster
+	operator-sdk run --local --operator-flags --debug=true
 
 code-vet: ## Run go vet for this project. More info: https://golang.org/cmd/vet/
 	@echo go vet
@@ -54,7 +55,6 @@ code-gen: ## Run the operator-sdk commands to generated code (k8s and openapi)
 	operator-sdk generate openapi
 
 ##@ Tests
-
 test-e2e: ## Run integration e2e tests with different options.
 	@echo ... Running the same e2e tests with different args ...
 	@echo ... Running locally ...

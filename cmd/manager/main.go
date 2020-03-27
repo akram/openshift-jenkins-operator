@@ -10,9 +10,13 @@ import (
 	"strings"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
+	uzap "go.uber.org/zap"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/client-go/rest"
 
+	"github.com/go-logr/logr"
+	"github.com/go-logr/zapr"
+	"github.com/golang/glog"
 	"github.com/redhat-developer/openshift-jenkins-operator/pkg/apis"
 	"github.com/redhat-developer/openshift-jenkins-operator/pkg/controller"
 	"github.com/redhat-developer/openshift-jenkins-operator/version"
@@ -56,6 +60,7 @@ func main() {
 	// Add flags registered by imported packages (e.g. glog and
 	// controller-runtime)
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+	debug := pflag.Bool("debug", false, "Set log level to debug")
 
 	pflag.Parse()
 
@@ -67,7 +72,8 @@ func main() {
 	// implementing the logr.Logger interface. This logger will
 	// be propagated through the whole operator, generating
 	// uniform and structured logs.
-	logf.SetLogger(zap.Logger())
+	//logf.SetLogger(zap.Logger())
+	logf.SetLogger(zapLogger(*debug))
 
 	printVersion()
 
@@ -208,4 +214,25 @@ func serveCRMetrics(cfg *rest.Config, operatorNs string) error {
 		return err
 	}
 	return nil
+}
+
+func zapLogger(debug bool) logr.Logger {
+	var zapLog *uzap.Logger
+	var err error
+	zapLogCfg := uzap.NewDevelopmentConfig()
+	if debug {
+		zapLogCfg.Level = uzap.NewAtomicLevelAt(uzap.DebugLevel)
+	} else {
+		zapLogCfg.Level = uzap.NewAtomicLevelAt(uzap.InfoLevel)
+	}
+	zapLog, err = zapLogCfg.Build(uzap.AddStacktrace(uzap.DPanicLevel), uzap.AddCallerSkip(1))
+	// who watches the watchmen?
+	fatalIfErr(err, glog.Fatalf)
+	return zapr.NewLogger(zapLog)
+}
+
+func fatalIfErr(err error, f func(format string, v ...interface{})) {
+	if err != nil {
+		f("unable to construct the logger: %v", err)
+	}
 }

@@ -19,12 +19,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
-var log = logf.Log.WithName("controller_jenkins")
-
-/**
-* USER ACTION REQUIRED: This is a scaffold file intended for the user to modify with their own Controller
-* business logic.  Delete these comments after modifying this file.*
- */
+var log = logf.Log.WithName("jenkins_controller")
 
 // Add creates a new Jenkins Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
